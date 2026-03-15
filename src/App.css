@@ -1,0 +1,370 @@
+/* ===== MARQUEE / TICKER ===== */
+.marquee-track {
+  display: flex;
+  gap: 3rem;
+  animation: marquee 40s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    to right, transparent 0%, black 8%, black 92%, transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right, transparent 0%, black 8%, black 92%, transparent 100%
+  );
+}
+
+/* ===== GLASSMORPHISM ===== */
+.glass {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.glass-subtle {
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.glass-card {
+  background: rgba(10, 10, 10, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ===== GRADIENT TEXT ===== */
+.gradient-text {
+  background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 50%, #F59E0B 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== NEON GLOW BORDER ===== */
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, #F59E0B, #A855F7, #3B82F6, #F59E0B);
+  background-size: 300% 300%;
+  animation: gradient-shift 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.glow-border:hover::before {
+  opacity: 1;
+}
+
+/* ===== NAV UNDERLINE ===== */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #F59E0B;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  transform: scaleX(1);
+}
+
+/* ===== CARDS ===== */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(245, 158, 11, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== BUTTON PRESS ===== */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* ===== HIDE SCROLLBAR ===== */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== HORIZONTAL SCROLL SNAP ===== */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-snap-x > * {
+  scroll-snap-align: start;
+}
+
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+  background: linear-gradient(90deg, #2B2C33 25%, #3A3B42 50%, #2B2C33 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 2s linear infinite;
+  border-radius: 8px;
+}
+
+/* ===== 3D MOMENT SLAB — Hybrid Approach C ===== */
+/* CSS Variable structure per design analysis */
+:root {
+  --slab-glow-common: #9CA3AF;
+  --slab-glow-rare: #3B82F6;
+  --slab-glow-epic: #A855F7;
+  --slab-glow-legendary: #F59E0B;
+  --slab-glow-ultimate: #EF4444;
+  --slab-depth: 36px;
+  --slab-rotation-idle: -15deg;
+  --slab-rotation-speed: 10s;
+  --slab-dwell-delay: 1s;
+  --slab-return-duration: 0.8s;
+  --slab-return-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.slab-container {
+  perspective: 1000px;
+  perspective-origin: center center;
+}
+
+.slab {
+  transform-style: preserve-3d;
+  transform: rotateY(var(--slab-rotation-idle));
+  transition: transform var(--slab-return-duration) var(--slab-return-easing);
+  will-change: transform;
+}
+
+/* Phase 2: Hover entry — subtle glow intensification (no rotation yet) */
+.slab-container:hover .slab {
+  /* Only slight shift; dwell rotation is JS-controlled */
+  filter: brightness(1.05);
+}
+
+/* Phase 3: Dwell trigger — continuous Y-axis rotation (class added via JS) */
+.slab.slab--rotating {
+  animation: slab-full-rotate var(--slab-rotation-speed) linear infinite;
+  transition: none;
+}
+
+/* Phase 4: Exit — class removed, transition returns to idle */
+/* (handled by removing .slab--rotating; CSS transition kicks in) */
+
+@keyframes slab-full-rotate {
+  0%   { transform: rotateY(var(--slab-rotation-idle)); }
+  100% { transform: rotateY(345deg); }
+}
+
+/* Edge glow pulse on neon edges during rotation */
+.slab--rotating .slab__edge {
+  animation: slab-glow-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes slab-glow-pulse {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+/* Face positioning */
+.slab__face {
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+.slab__front {
+  inset: 0;
+  z-index: 2;
+}
+
+.slab__back {
+  inset: 0;
+  transform: rotateY(180deg);
+  background: #0A0A0A;
+}
+
+/* Side faces — neon glow edges */
+.slab__edge {
+  position: absolute;
+  background: #0A0A0A;
+  transition: box-shadow 0.4s ease, opacity 0.4s ease;
+}
+
+.slab__right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: var(--slab-depth);
+  transform-origin: right center;
+}
+
+.slab__left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--slab-depth);
+  transform-origin: left center;
+}
+
+.slab__top {
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--slab-depth);
+  transform-origin: top center;
+}
+
+.slab__bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--slab-depth);
+  transform-origin: bottom center;
+}
+
+/* Video front face styling */
+.slab__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+
+.slab__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.4s ease;
+}
+
+/* When video is playing, hide the poster */
+.slab__front--playing .slab__poster {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Neon corner accents on front face — rarity indicator */
+.slab__neon-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: 3;
+  transition: box-shadow 0.4s ease;
+}
+.slab__neon-corner--tl {
+  top: 0;
+  left: 0;
+  border-top: 2px solid var(--neon-color);
+  border-left: 2px solid var(--neon-color);
+  border-radius: 12px 0 0 0;
+}
+.slab__neon-corner--tr {
+  top: 0;
+  right: 0;
+  border-top: 2px solid var(--neon-color);
+  border-right: 2px solid var(--neon-color);
+  border-radius: 0 12px 0 0;
+}
+.slab__neon-corner--bl {
+  bottom: 0;
+  left: 0;
+  border-bottom: 2px solid var(--neon-color);
+  border-left: 2px solid var(--neon-color);
+  border-radius: 0 0 0 12px;
+}
+.slab__neon-corner--br {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid var(--neon-color);
+  border-right: 2px solid var(--neon-color);
+  border-radius: 0 0 12px 0;
+}
+
+/* Hover intensification for neon corners */
+.slab-container:hover .slab__neon-corner {
+  box-shadow: 0 0 16px var(--neon-color), inset 0 0 10px color-mix(in srgb, var(--neon-color) 30%, transparent);
+}
+
+/* Legendary tier: all edges glow on every visible face */
+.slab--legendary .slab__edge {
+  box-shadow:
+    0 0 25px var(--neon-color),
+    0 0 50px color-mix(in srgb, var(--neon-color) 40%, transparent),
+    inset 0 0 15px color-mix(in srgb, var(--neon-color) 20%, transparent);
+}
+
+/* ===== GRADIENT MASKS (horizontal scroll edges) ===== */
+.scroll-mask-right::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background: linear-gradient(to right, transparent, #000000);
+  pointer-events: none;
+  z-index: 10;
+}
+.scroll-mask-left::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background: linear-gradient(to left, transparent, #000000);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ===== FROSTED CTA ===== */
+.frosted-cta {
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.2), transparent);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.frosted-cta:hover {
+  background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.3), transparent);
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* ===== RADIAL GRADIENT LIGHT SOURCES ===== */
+.radial-glow-gold {
+  background: radial-gradient(ellipse at top left, rgba(245, 158, 11, 0.15) 0%, transparent 60%);
+}
+.radial-glow-purple {
+  background: radial-gradient(ellipse at top left, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+}
+.radial-glow-blue {
+  background: radial-gradient(ellipse at top left, rgba(59, 130, 246, 0.15) 0%, transparent 60%);
+}
+
+/* ===== RESPONSIVE TYPOGRAPHY ===== */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
